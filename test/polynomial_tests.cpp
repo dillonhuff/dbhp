@@ -2,6 +2,7 @@
 
 #include "catch.hpp"
 #include "dbhp/polynomial.h"
+#include "dbhp/division.h"
 
 using namespace std;
 
@@ -46,5 +47,30 @@ namespace dbhp {
     polynomial<int> q(ms2);
     
     REQUIRE(sum == p + q);
+  }
+
+  TEST_CASE("Polynomial division, 4 / 2 == 2") {
+    vector<unsigned> pows1{};
+    monomial<int> m1{4, pows1};
+    vector<monomial<int>> ms1{m1};
+    polynomial<int> p{ms1};
+    
+    vector<unsigned> pows2{};
+    monomial<int> m2{2, pows2};
+    vector<monomial<int>> ms2{m2};
+    polynomial<int> q{ms2};
+
+    monomial<int> m3{2, pows2};
+    vector<monomial<int>> ms3{m3};
+    polynomial<int> quot{ms3};
+
+    vector<monomial<int>> z{};
+    polynomial<int> rem{z};
+    
+    division_result<int> res = divide(p, q);
+
+    REQUIRE(res.succeeded());
+    REQUIRE(res.q() == quot);
+    REQUIRE(res.r() == rem);
   }
 }

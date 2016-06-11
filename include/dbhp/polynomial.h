@@ -39,6 +39,15 @@ namespace dbhp {
       return EQUAL;
     }
 
+    void print(std::ostream& out) const {
+      out << cf;
+      for (unsigned i = 0; i < pows.size(); i++) {
+	//monomials[i].print(out);
+	if (i < pows.size() - 1) {
+	  out << "*";
+	}
+      }
+    }
   };
 
   template<typename T>
@@ -50,7 +59,7 @@ namespace dbhp {
     polynomial(const std::vector<monomial<T>>& p_monomials) :
       monomials(p_monomials) {}
 
-    polynomial<T> times(const polynomial<T>& other) const {
+    polynomial<T> plus(const polynomial<T>& other) const {
       unsigned this_ind = 0;
       unsigned this_size = monomials.size();
 
@@ -113,6 +122,7 @@ namespace dbhp {
 	out << "0";
       }
       for (unsigned i = 0; i < num_monomials(); i++) {
+	monomials[i].print(out);
 	if (i < num_monomials() - 1) {
 	  out << " + ";
 	}
@@ -127,7 +137,7 @@ namespace dbhp {
 
   template<typename T>
   polynomial<T> operator+(const polynomial<T>& p, const polynomial<T>& q) {
-    return p.times(q);
+    return p.plus(q);
   }
 
   template<typename T>
@@ -144,6 +154,15 @@ namespace dbhp {
   std::ostream& operator<<(std::ostream& out, const polynomial<T>& p) {
     p.print(out);
     return out;
+  }
+
+  template<typename T>
+  polynomial<T> zero(unsigned num_vars) {
+    assert(false);
+    // vector<unsigned>
+    // monomial<int> m3{2};
+    // vector<monomial<int>> ms3{m3};
+    // polynomial<int> quot{ms3};
   }
 
 }
