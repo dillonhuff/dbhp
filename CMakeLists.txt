@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 
 project(dbhp)
 
-SET(EXTRA_CXX_COMPILE_FLAGS "-std=c++11 -I./src -I./test -I/opt/local/include -O2 -Werror -Wall -Wextra -pedantic")
+SET(EXTRA_CXX_COMPILE_FLAGS "-std=c++14 -I./src -I./test -I/opt/local/include -O2 -Werror -Wall -pedantic")
 
 SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${EXTRA_CXX_COMPILE_FLAGS}")
 
