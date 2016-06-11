@@ -5,19 +5,40 @@
 
 namespace dbhp {
 
+  enum order {LESS, EQUAL, GREATER};
+
   template<typename T>
   class monomial {
   protected:
-    T coeff;
+    T cf;
     std::vector<unsigned> pows;
     
   public:
     monomial(const T p_coeff, const std::vector<unsigned>& p_pows) :
-      coeff(p_coeff), pows(p_pows) {}
+      cf(p_coeff), pows(p_pows) {}
 
     monomial<T> scalar_times(const T c) const {
-      return monomial<T>(c*coeff, pows);
+      return monomial<T>(c*cf, pows);
     }
+
+    monomial<T> add_coeff(const T c) const {
+      return monomial<T>(c + cf, pows);
+    }
+
+    T coeff() const { return cf; }
+    
+    order compare_multidegree(const monomial<T>& other) const {
+      assert(other.pows.size() == pows.size());
+      for (unsigned i = 0; i < pows.size(); i++) {
+	if (pows[i] < other.pows[i]) {
+	  return LESS;
+	} else if (pows[i] > other.pows[i]) {
+	  return GREATER;
+	}
+      }
+      return EQUAL;
+    }
+
   };
 
   template<typename T>
@@ -39,15 +60,63 @@ namespace dbhp {
       std::vector<monomial<T>> new_monos;
 
       while (this_ind < this_size && other_ind < other_size) {
-	this_ind++;
-	other_ind++;
+
+	auto this_m = monomials[this_ind];
+	auto other_m = other.monomials[other_ind];
+	
+	switch (this_m.compare_multidegree(other_m)) {
+	case EQUAL:
+	  new_monos.push_back(this_m.add_coeff(other_m.coeff()));
+	  
+	  this_ind++;
+	  other_ind++;
+
+	  break;
+	case LESS:
+	  new_monos.push_back(this_m);
+
+	  this_ind++;
+
+	  break;
+	case GREATER:
+	  new_monos.push_back(other_m);
+
+	  other_ind++;
+
+	  break;
+	default:
+	  assert(false);
+	}
       }
 
+      while (this_ind < this_size) {
+	new_monos.push_back(monomials[this_ind]);
+	this_ind++;
+      }
+
+      while (other_ind < other_size) {
+	new_monos.push_back(monomials[other_ind]);
+	other_ind++;
+      }
+      
       return polynomial<T>(new_monos);
     }
 
+    unsigned num_monomials() const { return monomials.size(); }
+
     bool equals(const polynomial<T>& other) const {
-      return true;
+      return num_monomials() == other.num_monomials();
+    }
+
+    void print(std::ostream& out) const {
+      if (num_monomials() == 0) {
+	out << "0";
+      }
+      for (unsigned i = 0; i < num_monomials(); i++) {
+	if (i < num_monomials() - 1) {
+	  out << " + ";
+	}
+      }
     }
   };
 
@@ -71,9 +140,10 @@ namespace dbhp {
     return !(p == q);
   }
 
-  // template<typename T>
-  // std::ostream operator<<(std::ostream&, const polynomial<T>&) {
-  //   assert(false);
-  // }
+  template<typename T>
+  std::ostream& operator<<(std::ostream& out, const polynomial<T>& p) {
+    p.print(out);
+    return out;
+  }
 
 }
