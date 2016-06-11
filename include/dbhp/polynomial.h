@@ -17,6 +17,8 @@ namespace dbhp {
     monomial(const T p_coeff, const std::vector<unsigned>& p_pows) :
       cf(p_coeff), pows(p_pows) {}
 
+    unsigned num_vars() const { return pows.size(); }
+
     monomial<T> scalar_times(const T c) const {
       return monomial<T>(c*cf, pows);
     }
@@ -58,6 +60,8 @@ namespace dbhp {
   public:
     polynomial(const std::vector<monomial<T>>& p_monomials) :
       monomials(p_monomials) {}
+
+    unsigned num_vars() const { return monomials.back().num_vars(); }
 
     polynomial<T> plus(const polynomial<T>& other) const {
       unsigned this_ind = 0;
@@ -117,6 +121,10 @@ namespace dbhp {
       return num_monomials() == other.num_monomials();
     }
 
+    polynomial<T> lcof(unsigned var) const {
+      assert(false);
+    }
+
     void print(std::ostream& out) const {
       if (num_monomials() == 0) {
 	out << "0";
@@ -157,12 +165,10 @@ namespace dbhp {
   }
 
   template<typename T>
-  polynomial<T> zero(unsigned num_vars) {
-    assert(false);
-    // vector<unsigned>
-    // monomial<int> m3{2};
-    // vector<monomial<int>> ms3{m3};
-    // polynomial<int> quot{ms3};
+  polynomial<T> zero() {
+    std::vector<monomial<T>> zm{};
+    polynomial<T> z{zm};
+    return z;
   }
 
 }

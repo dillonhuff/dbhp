@@ -22,10 +22,44 @@ namespace dbhp {
 
   template<typename T>
   division_result<T> divide(const polynomial<T>& p, const polynomial<T>& q) {
-    // assert(p.num_vars() == q.num_vars());
-    
-    // return rdivide(p, q, zero(p.num_vars));
-    return division_result<T>(p, q);
+    assert(p.num_vars() == q.num_vars());
+    polynomial<T> z = zero<T>();
+    return rdivide(p, q, z);
   }
 
+  template<typename T>
+  std::pair<bool, unsigned> next_var(const polynomial<T>& f,
+				     const polynomial<T>& g) {
+    assert(false);
+  }
+
+  template<typename T>
+  division_result<T> constant_div(const polynomial<T>& f,
+				  const polynomial<T>& g) {
+    assert(false);
+  }
+
+  template<typename T>
+  division_result<T> rdivide(const polynomial<T>& f,
+			     const polynomial<T>& g,
+			     const polynomial<T>& q) {
+    std::pair<bool, unsigned> nvar = next_var(f, g);
+
+    if (nvar.first == false) {
+      return constant_div(f, g);
+    }
+
+    unsigned var = nvar.second;
+    polynomial<T> f_lcof = f.lcof(var);
+    polynomial<T> g_lcof = g.lcof(var);
+
+    division_result<T> res = divide(f_lcof, g_lcof);
+    if (res.succeeded()) {
+      
+    } else {
+      
+    }
+    assert(false);
+  }
+  
 }
