@@ -41,6 +41,15 @@ namespace dbhp {
       return EQUAL;
     }
 
+    bool is_constant() const {
+      for (auto p : pows) {
+	if (p > 0) {
+	  return false;
+	}
+      }
+      return true;
+    }
+
     void print(std::ostream& out) const {
       out << cf;
       for (unsigned i = 0; i < pows.size(); i++) {
@@ -62,6 +71,15 @@ namespace dbhp {
       monomials(p_monomials) {}
 
     unsigned num_vars() const { return monomials.back().num_vars(); }
+
+    T constant_value() const {
+      for (auto m : monomials) {
+	if (m.is_constant()) {
+	  return m.coeff();
+	}
+      }
+      return 0;
+    }
 
     polynomial<T> plus(const polynomial<T>& other) const {
       unsigned this_ind = 0;
@@ -162,6 +180,16 @@ namespace dbhp {
   std::ostream& operator<<(std::ostream& out, const polynomial<T>& p) {
     p.print(out);
     return out;
+  }
+
+  template<typename T>
+  polynomial<T> constant(T c, unsigned num_vars) {
+    std::vector<unsigned> powers(num_vars);
+    std::fill(begin(powers), end(powers), 0);
+    monomial<T> cm(c, powers);
+    std::vector<monomial<T>> zm{cm};
+    polynomial<T> z{zm};
+    return z;
   }
 
   template<typename T>
